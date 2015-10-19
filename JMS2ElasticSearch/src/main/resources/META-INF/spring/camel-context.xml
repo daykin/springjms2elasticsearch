@@ -15,24 +15,16 @@
       <transportConnector uri="tcp://localhost:61616" />
     </transportConnectors>
   </broker>
-
-  <!-- Lets connect the Camel ActiveMQ component to the embedded broker.
-       See http://camel.apache.org/activemq.html for more information.
-  -->
-  
-  <!--<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-    <property name="brokerURL" value="failover:tcp://localhost:61616"/>
-  </bean> -->
   
   <bean id = "jmsConnectionFactory" 
-      class ="org.apache.activemq.ActiveMQConnnectionFactory">
+      class ="org.apache.activemq.ActiveMQConnectionFactory">
       <property name="brokerURL" value="tcp://alarm.hlc.nscl.msu.edu:61616"></property>
   </bean>
   
   <bean id="jms"
    class="org.apache.camel.component.jms.JmsConfiguration">
    <property name="connectionFactory" ref="jmsConnectionFactory"/>
-   <property name="concurrentConsumers" value="10"/>
+   <property name="concurrentConsumers" value="9"/>
   </bean>
   
   <camelContext xmlns="http://camel.apache.org/schema/spring">
@@ -43,49 +35,49 @@
   <route id="alarm-controls_client">
     <from uri="jms:topic:ALARM-CONTROLS_CLIENT"/>
     <filter>
-      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <simple>${body[TEXT]} != "IDLE"</simple>
       <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
     </filter>
   </route>
   <route id="alarm_server">
     <from uri="jms:topic:ALARM_SERVER"/>
     <filter>
-      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <simple>${body[TEXT]} != "IDLE"</simple>
       <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
     </filter>
   </route>
   <route id="alarm_client">
     <from uri="jms:topic:ALARM_CLIENT"/>
     <filter>
-      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <simple>${body[TEXT]} != "IDLE"</simple>
       <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
     </filter>
   </route>
   <route id="alarm_SRF_server">
     <from uri="jms:topic:ALARM_SRF_SERVER"/>
     <filter>
-      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <simple>${body[TEXT]} != "IDLE"</simple>
       <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
     </filter>
   </route>
   <route id="alarm_SRF_client">
     <from uri="jms:topic:ALARM_SRF_CLIENT"/>
     <filter>
-      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <simple>${body[TEXT]} != "IDLE"</simple>
       <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
     </filter>
   </route>
   <route id="alarm_900W_server">
     <from uri="jms:topic:ALARM_900W_SERVER"/>
     <filter>
-      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <simple>${body[TEXT]} != "IDLE"</simple>
       <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
     </filter>
   </route>
   <route id="alarm_900w_client">
     <from uri="jms:topic:ALARM_900W_CLIENT"/>
     <filter>
-      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <simple>${body[TEXT]} != "IDLE"</simple>
       <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
     </filter>
   </route>
