@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configures the Camel Context-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+  <!-- This creates an embedded ActiveMQ Broker -->
+  <broker xmlns="http://activemq.apache.org/schema/core" useJmx="true" persistent="false">
+    <transportConnectors>
+      <transportConnector uri="tcp://localhost:61616" />
+    </transportConnectors>
+  </broker>
+
+  <!-- Lets connect the Camel ActiveMQ component to the embedded broker.
+       See http://camel.apache.org/activemq.html for more information.
+  -->
+  
+  <!--<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <property name="brokerURL" value="failover:tcp://localhost:61616"/>
+  </bean> -->
+  
+  <bean id = "jmsConnectionFactory" 
+      class ="org.apache.activemq.ActiveMQConnnectionFactory">
+      <property name="brokerURL" value="tcp://alarm.hlc.nscl.msu.edu:61616"></property>
+  </bean>
+  
+  <bean id="jms"
+   class="org.apache.camel.component.jms.JmsConfiguration">
+   <property name="connectionFactory" ref="jmsConnectionFactory"/>
+   <property name="concurrentConsumers" value="10"/>
+  </bean>
+  
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route id="logs/csstudio">
+    <from uri="jms:topic:logs/cs-studio"/>
+    <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=logs&amp;indexType=cs-studio&amp;ip=192.168.3.26"/>
+  </route>
+  <route id="alarm-controls_client">
+    <from uri="jms:topic:ALARM-CONTROLS_CLIENT"/>
+    <filter>
+      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
+    </filter>
+  </route>
+  <route id="alarm_server">
+    <from uri="jms:topic:ALARM_SERVER"/>
+    <filter>
+      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
+    </filter>
+  </route>
+  <route id="alarm_client">
+    <from uri="jms:topic:ALARM_CLIENT"/>
+    <filter>
+      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
+    </filter>
+  </route>
+  <route id="alarm_SRF_server">
+    <from uri="jms:topic:ALARM_SRF_SERVER"/>
+    <filter>
+      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
+    </filter>
+  </route>
+  <route id="alarm_SRF_client">
+    <from uri="jms:topic:ALARM_SRF_CLIENT"/>
+    <filter>
+      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
+    </filter>
+  </route>
+  <route id="alarm_900W_server">
+    <from uri="jms:topic:ALARM_900W_SERVER"/>
+    <filter>
+      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
+    </filter>
+  </route>
+  <route id="alarm_900w_client">
+    <from uri="jms:topic:ALARM_900W_CLIENT"/>
+    <filter>
+      <simple>${body[TEXT]} != \"IDLE\"</simple>
+      <to uri="elasticsearch://elasticsearch?operation=INDEX&amp;indexName=alarms&amp;indexType=beast&amp;ip=192.168.3.26"/>
+    </filter>
+  </route>
+</camelContext>
+
+</beans>
