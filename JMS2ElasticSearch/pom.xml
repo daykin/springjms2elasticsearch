@@ -3,13 +3,11 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.mycompany</groupId>
-  <artifactId>camel-activemq</artifactId>
+  <groupId>edu.msu.frib</groupId>
   <packaging>jar</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 
-  <name>ActiveMQ embedded with Camel</name>
-  <url>http://www.myorganization.org</url>
+  <name>Spring JMS to ElasticSearch Route</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -121,6 +119,21 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+          <plugin>
+      <!-- Build an executable JAR -->
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <version>2.6</version>
+      <configuration>
+        <logClasspath>true</logClasspath>
+        <archive>
+          <manifest>
+          	<addClasspath>true</addClasspath>
+            <mainClass>org.apache.camel.spring.Main</mainClass>
+          </manifest>
+        </archive>
+      </configuration>
+    </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -134,9 +147,13 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
+        <configuration>
+        	<logClasspath>true</logClasspath>
+        </configuration>
         <version>2.14.0</version>
       </plugin>
     </plugins>
   </build>
 
+  <artifactId>camel-JMS2ElasticSearch</artifactId>
 </project>
