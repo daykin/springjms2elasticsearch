@@ -18,91 +18,75 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>2.14.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
-      <version>2.14.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
-      <version>2.14.0</version>
     </dependency>
 
     <!-- the ActiveMQ client with connection pooling -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
-      <version>5.10.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-camel</artifactId>
-      <version>5.10.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-pool</artifactId>
-      <version>5.10.0</version>
     </dependency>
 
     <!-- the ActiveMQ broker is optional and can be removed if connecting to a remote broker only -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
-      <version>5.10.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-spring</artifactId>
-      <version>5.10.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-kahadb-store</artifactId>
-      <version>5.10.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-spring</artifactId>
-      <version>3.18</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>3.2.11.RELEASE</version>
     </dependency>
 
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.7</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.7</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
     </dependency>
 
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
-      <version>2.14.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
     	<groupId>org.apache.camel</groupId>
     	<artifactId>camel-elasticsearch</artifactId>
-    	<version>2.14.0</version>
     </dependency>
   </dependencies>
 
@@ -119,8 +103,7 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-          <plugin>
-      <!-- Build an executable JAR -->
+          <!-- <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-jar-plugin</artifactId>
       <version>2.6</version>
@@ -133,7 +116,70 @@
           </manifest>
         </archive>
       </configuration>
-    </plugin>
+    </plugin>-->
+    <!-- assembly plugin -->
+    <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>org.apache.camel.spring.Main</mainClass>
+            </manifest>
+          </archive>  
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase> 
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+     </plugin> 
+     
+     <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <configuration>
+        <filters>
+            <filter>
+                <artifact>*:*</artifact>
+                <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                </excludes>
+            </filter>
+        </filters>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>shade</goal>
+            </goals>
+            <configuration>
+                <transformers>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/spring.handlers</resource>
+                    </transformer>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/spring.schemas</resource>
+                    </transformer>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                        <mainClass>org.apache.camel.spring.Main</mainClass>
+                    </transformer>
+                </transformers>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+   
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -156,4 +202,88 @@
   </build>
 
   <artifactId>camel-JMS2ElasticSearch</artifactId>
+  <dependencyManagement>
+  	<dependencies>
+  		<dependency>
+  			<groupId>org.apache.camel</groupId>
+  			<artifactId>camel-core</artifactId>
+  			<version>2.14.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.camel</groupId>
+  			<artifactId>camel-jms</artifactId>
+  			<version>2.14.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.camel</groupId>
+  			<artifactId>camel-spring</artifactId>
+  			<version>2.14.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.activemq</groupId>
+  			<artifactId>activemq-client</artifactId>
+  			<version>5.10.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.activemq</groupId>
+  			<artifactId>activemq-camel</artifactId>
+  			<version>5.10.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.activemq</groupId>
+  			<artifactId>activemq-pool</artifactId>
+  			<version>5.10.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.activemq</groupId>
+  			<artifactId>activemq-broker</artifactId>
+  			<version>5.10.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.activemq</groupId>
+  			<artifactId>activemq-spring</artifactId>
+  			<version>5.10.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.activemq</groupId>
+  			<artifactId>activemq-kahadb-store</artifactId>
+  			<version>5.10.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.xbean</groupId>
+  			<artifactId>xbean-spring</artifactId>
+  			<version>3.18</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.springframework</groupId>
+  			<artifactId>spring-context</artifactId>
+  			<version>3.2.11.RELEASE</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.slf4j</groupId>
+  			<artifactId>slf4j-api</artifactId>
+  			<version>1.7.7</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.slf4j</groupId>
+  			<artifactId>slf4j-log4j12</artifactId>
+  			<version>1.7.7</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>log4j</groupId>
+  			<artifactId>log4j</artifactId>
+  			<version>1.2.17</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.camel</groupId>
+  			<artifactId>camel-test-spring</artifactId>
+  			<version>2.14.0</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.camel</groupId>
+  			<artifactId>camel-elasticsearch</artifactId>
+  			<version>2.14.0</version>
+  		</dependency>
+  	</dependencies>
+  </dependencyManagement>
 </project>
