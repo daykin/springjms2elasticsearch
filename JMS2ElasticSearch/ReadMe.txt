@@ -12,7 +12,6 @@ To run this project use the following Maven goal
     mvn camel:run
 
 
-To create a standalone jar:    mvn package
 For more help see the Apache Camel documentation
 
     http://camel.apache.org/
